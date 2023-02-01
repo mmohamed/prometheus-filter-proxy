@@ -17,12 +17,12 @@ func modifyRequest(r *http.Request, prometheusServerURL *url.URL) {
 	r.URL.Scheme = prometheusServerURL.Scheme
 	r.URL.Host = prometheusServerURL.Host
 	r.Host = prometheusServerURL.Host
-	
+
 	query := r.URL.Query().Get("query")
 	filter := r.URL.Query().Get("filter")
-	
-	if filter != "" && query != "" {
-		newQuery := "("+query+") and "+filter
+	// to ignore simple binary expression for Datasource validation in case of Grafana using
+	if filter != "" && query != "" && query != "1+1" {
+		newQuery := "(" + query + ") and " + filter
 		values := r.URL.Query()
 		values.Del("filter")
 		values.Set("query", newQuery)
